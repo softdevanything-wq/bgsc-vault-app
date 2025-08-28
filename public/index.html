@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  
+  <!-- ✅ 기본 뷰포트 및 호환성 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <!-- ✅ 보안 헤더들 -->
+  <!-- Content Security Policy - XSS 방지 -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://*.walletconnect.org https://*.walletconnect.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com data:;
+    img-src 'self' data: https: blob:;
+    connect-src 'self' https://lb.drpc.org https://bsc.drpc.org https: wss: ws:;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+  " />
+  
+  <!-- X-Frame-Options - 클릭재킹 방지 -->
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  
+  <!-- X-Content-Type-Options - MIME 타입 스니핑 방지 -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  
+  <!-- Referrer Policy - 리퍼러 정보 제한 -->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  
+  <!-- ✅ 개인정보 및 보안 설정 -->
+  <!-- 검색엔진 크롤링 제한 (프로덕션에서는 수정 필요할 수 있음) -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  
+  <!-- DNS Prefetch 제어 -->
+  <meta http-equiv="x-dns-prefetch-control" content="off" />
+  
+  <!-- ✅ 앱 메타데이터 (보안 고려) -->
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="BGSC Vault - Secure DeFi Protocol" />
+  
+  <!-- ✅ Apple 및 모바일 보안 설정 -->
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <meta name="apple-mobile-web-app-capable" content="no" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  
+  <!-- ✅ PWA 매니페스트 -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  
+  <!-- ✅ 추가 보안 메타 태그들 -->
+  <!-- 자동완성 비활성화 (민감한 입력 필드용) -->
+  <meta name="autocomplete" content="off" />
+  
+  <!-- 브라우저 캐시 제어 -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  
+  <!-- ✅ Google Fonts -->
+  <link
+  href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap"
+  rel="stylesheet"
+  />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <!-- ✅ HTTPS 강제 리다이렉트 (프로덕션용) -->
+  <script>
+    // HTTPS 강제 (프로덕션에서만)
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+      location.replace('https:' + window.location.href.substring(window.location.protocol.length));
+    }
+  </script>
+  
+  <title>Aden BGSC Vault - Secure DeFi Protocol</title>
+  
+  <!-- ✅ 보안 강화 스크립트 -->
+  <script>
+    (function() {
+      'use strict';
+      
+      // ✅ 개발자 도구 감지 및 경고 (선택적)
+      let devtools = {
+        open: false,
+        orientation: null
+      };
+      
+      const threshold = 160;
+      
+      setInterval(function() {
+        if (window.outerHeight - window.innerHeight > threshold || 
+            window.outerWidth - window.innerWidth > threshold) {
+          if (!devtools.open) {
+            devtools.open = true;
+            console.warn('🔒 Developer tools detected. Please be cautious with sensitive information.');
+          }
+        } else {
+          devtools.open = false;
+        }
+      }, 500);
+      
+      // ✅ 우클릭 및 키보드 단축키 제한 (개발 환경에서는 비활성화)
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        // 우클릭 방지
+        document.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          return false;
+        });
+        
+        // 특정 키 조합 방지
+        document.addEventListener('keydown', function(e) {
+          // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U 방지
+          if (e.keyCode === 123 || 
+              (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+              (e.ctrlKey && e.keyCode === 85)) {
+            e.preventDefault();
+            return false;
+          }
+        });
+      }
+      
+      // ✅ 콘솔 보안 경고
+      console.log('%c🔒 SECURITY WARNING', 'color: red; font-size: 30px; font-weight: bold;');
+      console.log('%cThis is a browser feature intended for developers. Do not paste or execute any code here that you do not understand. This could allow attackers to steal your information or take control of your account.', 'color: red; font-size: 16px;');
+      console.log('%c보안 경고: 이 콘솔에 코드를 붙여넣거나 실행하지 마세요. 악성 코드로 인해 개인정보가 유출되거나 계정이 탈취될 수 있습니다.', 'color: red; font-size: 16px;');
+      
+      // ✅ 글로벌 에러 핸들링
+      window.addEventListener('error', function(e) {
+        // 민감한 정보가 포함된 에러는 로깅하지 않음
+        if (e.message && (e.message.includes('private') || e.message.includes('key') || e.message.includes('password'))) {
+          e.preventDefault();
+          console.error('Security: Sensitive error blocked');
+          return false;
+        }
+      });
+      
+      // ✅ XSS 방지: innerHTML 사용 감지
+      const originalInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+      Object.defineProperty(Element.prototype, 'innerHTML', {
+        set: function(value) {
+          if (typeof value === 'string' && value.includes('<script')) {
+            console.warn('🔒 Security: Potential XSS attempt blocked');
+            return;
+          }
+          originalInnerHTML.set.call(this, value);
+        },
+        get: originalInnerHTML.get
+      });
+      
+    })();
+  </script>
+</head>
+<body>
+  <noscript>
+    <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+      <h1 style="color: #ef4444;">JavaScript Required</h1>
+      <p>BGSC Vault requires JavaScript to function properly.</p>
+      <p>Please enable JavaScript in your browser settings.</p>
+    </div>
+  </noscript>
+  
+  <div id="root"></div>
+  
+  <!-- ✅ 추가 보안 스크립트 -->
+  <script>
+    // ✅ 페이지 언로드 시 민감한 데이터 정리
+    window.addEventListener('beforeunload', function() {
+      // 세션 스토리지 정리
+      try {
+        sessionStorage.clear();
+      } catch(e) {}
+      
+      // 민감한 전역 변수 정리
+      if (window.__BGSC_VAULT_DEBUG__) {
+        delete window.__BGSC_VAULT_DEBUG__;
+      }
+    });
+    
+    // ✅ 페이지 가시성 변경 시 보안 처리
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        // 페이지가 숨겨질 때 민감한 정보 마스킹
+        const privateElements = document.querySelectorAll('[data-private="true"]');
+        privateElements.forEach(el => {
+          if (el.dataset.originalContent === undefined) {
+            el.dataset.originalContent = el.textContent;
+          }
+          el.textContent = '••••••';
+        });
+      } else {
+        // 페이지가 다시 보일 때 복원
+        const privateElements = document.querySelectorAll('[data-private="true"]');
+        privateElements.forEach(el => {
+          if (el.dataset.originalContent !== undefined) {
+            el.textContent = el.dataset.originalContent;
+            delete el.dataset.originalContent;
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

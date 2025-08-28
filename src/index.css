@@ -1,0 +1,317 @@
+/* index.css - 기본 스타일 및 RainbowKit 커스터마이징 */
+
+/* CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  background-color: #000;
+  color: #fff;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+li {
+  list-style: none;
+}
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+#root {
+  isolation: isolate;
+  min-height: 100vh;
+}
+
+/* RainbowKit 커스터마이징 */
+[data-rk] {
+  --rk-colors-accentColor: #8c5aff;
+  --rk-colors-accentColorForeground: #fff;
+  --rk-colors-actionButtonBorder: #374151;
+  --rk-colors-actionButtonBorderMobile: #374151;
+  --rk-colors-actionButtonSecondaryBackground: #1f2937;
+  --rk-colors-closeButton: #6b7280;
+  --rk-colors-closeButtonBackground: #111827;
+  --rk-colors-connectButtonBackground: #8c5aff;
+  --rk-colors-connectButtonBackgroundError: #ef4444;
+  --rk-colors-connectButtonInnerBackground: #8c5aff;
+  --rk-colors-connectButtonText: #fff;
+  --rk-colors-connectButtonTextError: #fff;
+  --rk-colors-connectionIndicator: #10b981;
+  --rk-colors-downloadBottomCardBackground: #111827;
+  --rk-colors-downloadTopCardBackground: #0f1419;
+  --rk-colors-error: #ef4444;
+  --rk-colors-generalBorder: #374151;
+  --rk-colors-generalBorderDim: #1f2937;
+  --rk-colors-menuItemBackground: #1f2937;
+  --rk-colors-modalBackdrop: rgba(0, 0, 0, 0.8);
+  --rk-colors-modalBackground: #111827;
+  --rk-colors-modalBorder: #374151;
+  --rk-colors-modalText: #fff;
+  --rk-colors-modalTextDim: #9ca3af;
+  --rk-colors-modalTextSecondary: #6b7280;
+  --rk-colors-profileAction: #1f2937;
+  --rk-colors-profileActionHover: #374151;
+  --rk-colors-profileForeground: #111827;
+  --rk-colors-selectedOptionBorder: #8c5aff;
+  --rk-colors-standby: #f59e0b;
+  --rk-fonts-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
+  --rk-radii-actionButton: 8px;
+  --rk-radii-connectButton: 8px;
+  --rk-radii-menuButton: 8px;
+  --rk-radii-modal: 16px;
+  --rk-radii-modalMobile: 16px;
+}
+
+/* RainbowKit 버튼 스타일 오버라이드 */
+button[data-testid="rk-connect-button"] {
+  background: linear-gradient(135deg, #8c5aff, #5e6afe) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(140, 90, 255, 0.3) !important;
+  transition: all 0.2s ease !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+button[data-testid="rk-connect-button"]:hover {
+  box-shadow: 0 6px 20px rgba(140, 90, 255, 0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* RainbowKit 모달 스타일 */
+div[data-rk] div[role="dialog"] {
+  background: #111827 !important;
+  border: 1px solid #374151 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+
+div[data-rk] div[role="dialog"] h1 {
+  color: #fff !important;
+}
+
+div[data-rk] div[role="dialog"] button {
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+div[data-rk] div[role="dialog"] button:hover {
+  transform: translateY(-1px) !important;
+}
+
+/* 지갑 연결 상태 버튼 */
+div[data-rk] button[type="button"] {
+  background: #1f2937 !important;
+  border: 1px solid #374151 !important;
+  border-radius: 8px !important;
+  color: #fff !important;
+  transition: all 0.2s ease !important;
+}
+
+div[data-rk] button[type="button"]:hover {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111827;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+/* 선택 텍스트 스타일 */
+::selection {
+  background: rgba(140, 90, 255, 0.3);
+  color: #fff;
+}
+
+::-moz-selection {
+  background: rgba(140, 90, 255, 0.3);
+  color: #fff;
+}
+
+/* 포커스 아웃라인 */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #8c5aff;
+  outline-offset: 2px;
+}
+
+/* 링크 스타일 */
+a {
+  color: #8c5aff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #5e6afe;
+  text-decoration: underline;
+}
+
+/* 로딩 애니메이션 */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* 페이드 인 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 유틸리티 클래스 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 모바일 터치 개선 */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* 다크 모드 (기본값) */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #000;
+    color: #fff;
+  }
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: high) {
+  :root {
+    --border-color: #fff;
+    --text-color: #fff;
+    --bg-color: #000;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    border: 2px solid var(--border-color);
+  }
+}
+
+/* 애니메이션 축소 선호도 존중 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 인쇄 스타일 */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

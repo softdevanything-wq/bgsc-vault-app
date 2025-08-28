@@ -1,0 +1,379 @@
+
+
+AppKit Guides
+Installation
+AppKit has support for Wagmi and Ethers v6 on Ethereum, @solana/web3.js on Solana and Bitcoin. Choose one of these to get started.
+
+​
+Installation
+If you prefer referring to a video tutorial for this, please click here.
+
+​
+Set up Reown AppKit using AI
+If you’re using Cursor IDE (or another AI based IDE) to build a project with Reown AppKit, Reown provides a .mdc file that enhances your development experience. The reown-appkit.mdc file here contains Cursor-specific rules and type hints for Reown AppKit.
+
+To use it in your project:
+
+Copy the reown-appkit.mdc file from this repository
+Create a .cursor/rules folder in your project’s root directory (if it doesn’t exist)
+Place the .mdc file in your project’s .cursor/rules folder
+For more info, refer to Cursor’s documentation.
+
+​
+AppKit CLI
+Reown offers a dedicated CLI to set up a minimal version of AppKit in the easiest and quickest way possible.
+
+To do this, please run the command below.
+
+
+Copy
+npx @reown/appkit-cli
+After running the command, you will be prompted to confirm the installation of the CLI. Upon your confirmation, the CLI will request the following details:
+
+Project Name: Enter the name for your project.
+Framework: Select your preferred framework or library. Currently, you have three options: React, Next.js, and Vue.
+Network-Specific libraries: Choose whether you want to install Wagmi, Ethers, Solana, or Multichain (EVM + Solana).
+After providing the project name and selecting your preferences, the CLI will install a minimal example of AppKit with your preferred blockchain library. The example will be pre-configured with a projectId that will only work on localhost.
+
+To fully configure your project, please obtain a projectId from the Reown Cloud Dashboard and update your project accordingly.
+
+Refer to this section for more information.
+
+​
+Custom Installation
+If you are setting up your React app, please do not use npx create-react-app, as it has been deprecated. Using it may cause dependency issues. Instead, please use Vite to create your React app. You can set it up by running npm create vite@latest.
+
+Wagmi
+Ethers v5
+Ethers
+Solana
+Bitcoin
+
+npm
+
+Yarn
+
+Bun
+
+pnpm
+
+Copy
+npm install @reown/appkit @reown/appkit-adapter-ethers5 ethers@5.7.2
+​
+Cloud Configuration
+Create a new project on reown Cloud at https://cloud.reown.com and obtain a new project ID.
+
+Don’t have a project ID?
+
+Head over to Reown Cloud and create a new project now!
+
+Get started
+​
+Implementation
+Wagmi
+Ethers v5
+Ethers
+Solana
+Bitcoin
+Ethers v5 Example
+Check the React ethers v5 example
+
+On top of your app set up the following configuration, making sure that all functions are called outside any React component to avoid unwanted rerenders.
+
+
+Copy
+import { createAppKit } from "@reown/appkit/react";
+import { Ethers5Adapter } from "@reown/appkit-adapter-ethers5";
+import { mainnet, arbitrum } from "@reown/appkit/networks";
+
+// 1. Get projectId
+const projectId = "YOUR_PROJECT_ID";
+
+// 2. Create a metadata object - optional
+const metadata = {
+  name: "My Website",
+  description: "My Website description",
+  url: "https://mywebsite.com", // origin must match your domain & subdomain
+  icons: ["https://avatars.mywebsite.com/"],
+};
+
+// 3. Create the AppKit instance
+createAppKit({
+  adapters: [new Ethers5Adapter()],
+  metadata: metadata,
+  networks: [mainnet, arbitrum],
+  projectId,
+  features: {
+    analytics: true, // Optional - defaults to your Cloud configuration
+  },
+});
+
+export default function App() {
+  return <YourApp />; //make sure you have configured the <appkit-button> inside
+}
+Make sure that the url from the metadata matches your domain and subdomain. This will later be used by the Verify API to tell wallets if your application has been verified or not.
+
+​
+Trigger the modal
+Wagmi
+Ethers v5
+Ethers
+Solana
+Bitcoin
+To open AppKit you can use our web component or build your own button with AppKit hooks.
+
+Web Component
+Hooks
+
+Copy
+export default function ConnectButton() {
+  return <appkit-button />;
+}
+Learn more about the AppKit web components here
+
+Web components are global html elements that don’t require importing.
+
+​
+Smart Contract Interaction
+Wagmi
+Ethers
+Solana
+Ethers can help us interact with wallets and smart contracts:
+
+
+Copy
+import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
+import { BrowserProvider, Contract, formatUnits } from "ethers";
+
+const USDTAddress = "0x617f3112bf5397D0467D315cC709EF968D9ba546";
+
+// The ERC-20 Contract ABI, which is a common contract interface
+// for tokens (this is the Human-Readable ABI format)
+const USDTAbi = [
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+  "function balanceOf(address) view returns (uint)",
+  "function transfer(address to, uint amount)",
+  "event Transfer(address indexed from, address indexed to, uint amount)",
+];
+
+function Components() {
+  const { address, isConnected } = useAppKitAccount();
+  const { walletProvider } = useAppKitProvider("eip155");
+
+  async function getBalance() {
+    if (!isConnected) throw Error("User disconnected");
+
+    const ethersProvider = new BrowserProvider(walletProvider);
+    const signer = await ethersProvider.getSigner();
+    // The Contract object
+    const USDTContract = new Contract(USDTAddress, USDTAbi, signer);
+    const USDTBalance = await USDTContract.balanceOf(address);
+
+    console.log(formatUnits(USDTBalance, 18));
+  }
+
+  return <button onClick={getBalance}>Get User Balance</button>;
+}
+
+How to Sign Messages, Send Transactions, and Get Balance in EVM using AppKit with Ethers
+Learn how to use Reown AppKit for essential wallet functionalities such as signing messages, sending transactions, and retrieving wallet balances.
+
+In this recipe, you will learn how to:
+
+Retrieve the balance of the connected wallet
+Sign a message using a connected wallet
+Send a transaction to the EVM blockchain
+​
+Prerequisites
+A fundamental understanding of JavaScript and React.
+A minimal installation of AppKit in React.
+Obtain a new project Id on Reown Cloud at https://cloud.reown.com
+​
+Final project
+Appkit Ethers Example with blockchain interactions
+Download the full project to try it directly on your computer.
+
+​
+AppKit Minimal Installation
+You can start a small project following the guidelines from our installation React docs using Ethers
+
+​
+Start building
+In this guide we are going to use the library Ethers to make calls to the blockchain and to interact with the wallet.
+
+To get the balance, sign a message and send a transaction follow the same steps in each operation:
+
+Start by importing the BrowserProvider object, some AppKit hooks to get the account information, chain id and the Provider.
+
+Copy
+import {
+  useAppKitAccount,
+  useAppKitProvider,
+  useAppKitNetworkCore,
+  type Provider,
+} from "@reown/appkit/react";
+import {
+  BrowserProvider,
+  JsonRpcSigner,
+  formatEther,
+  parseUnits,
+} from "ethers";
+Use the useAppKitAccount hook to retrieve the user’s address and check if they are connected. The useAppKitNetworkCore hook to get the chain id and the useAppKitProvider hook to get the wallet provider.
+
+Copy
+// AppKit hook to get the address and check if the user is connected
+const { address, isConnected } = useAppKitAccount();
+// AppKit hook to get the chain id
+const { chainId } = useAppKitNetworkCore();
+// AppKit hook to get the wallet provider
+const { walletProvider } = useAppKitProvider<Provider>("eip155");
+​
+Get Balance
+Fetching a user’s balance is straightforward using the BrowserProvider object from ethers.
+
+Create a function to fetch and display (in console) the balance when triggered
+
+Copy
+// function to get the balance
+const handleGetBalance = async () => {
+  const provider = new BrowserProvider(walletProvider, chainId);
+  const balance = await provider.getBalance(address);
+  const eth = formatEther(balance);
+  console.log(`${eth} ETH`);
+};
+Finally, to call the function you can show the button in a component when isConnected is true
+
+Copy
+return (
+  isConnected && (
+    <div>
+      <button onClick={getBalance}>Get Balance</button>
+    </div>
+  )
+);
+​
+Sign a message
+To raise the modal to sign a message with your wallet. You can follow with these steps:
+
+Generate the function to raise the modal to sign the message
+
+Copy
+// function to sing a msg
+const handleSignMsg = async () => {
+  // create the provider and signer
+  const provider = new BrowserProvider(walletProvider, chainId);
+  const signer = new JsonRpcSigner(provider, address);
+  // sign the message
+  const signature = await signer?.signMessage("Hello Reown AppKit!");
+  // log the signature
+  console.log(signature);
+};
+Finally, to call the function:
+
+Copy
+return (
+  isConnected && (
+    <div>
+      <button onClick={handleSignMsg}>Sign Message</button>
+    </div>
+  )
+);
+​
+Send a transaction in EVM
+In order to raise the modal to sign and send a transaction with your wallet. You can follow with these steps:
+
+Create the test transaction
+
+Copy
+// test transaction
+const TEST_TX = {
+  to: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045" as Address, // vitalik address
+  value: parseUnits('0.0001', 'gwei')
+}
+Generate the function to raise the modal to send the transaction
+
+Copy
+// function to send a TX
+const handleSendTx = async () => {
+  // create the provider and signer
+  const provider = new BrowserProvider(walletProvider, chainId);
+  const signer = new JsonRpcSigner(provider, address);
+
+  // send the transaction
+  const tx = await signer.sendTransaction(TEST_TX);
+  // log the transaction
+  console.log(tx);
+};
+Finally, to invoke the function:
+
+Copy
+return (
+  isConnected && (
+    <div>
+      <button onClick={handleSendTx}>Send Transaction</button>
+    </div>
+  )
+);
+​
+Conclusion
+By following this guide, you’ve learned how to integrate Reown AppKit and Ethers in your React application to perform essential wallet operations. You can now fetch wallet balances, sign messages, and send transactions seamlessly in an EVM-compatible blockchain environment.
+
+Relay
+​
+Project ID
+The Project ID is consumed through URL parameters.
+
+URL parameters used:
+
+projectId: Your Project ID can be obtained from cloud.reown.com
+Example URL:
+
+https://relay.walletconnect.com/?projectId=c4f79cc821944d9680842e34466bfbd
+
+This can be instantiated from the client with the projectId in the SignClient constructor.
+
+
+Copy
+import SignClient from '@walletconnect/sign-client'
+const signClient = await SignClient.init({
+  projectId: 'c4f79cc821944d9680842e34466bfb'
+})
+​
+Allowlist
+To help prevent malicious use of your project ID you are strongly encouraged to set an allowlist of origins or application/bundle ids for mobile applications where the project ID is used. Requests from other origins will be denied.
+
+Allowlist supports a list of origins in the format [scheme://]<hostname[:port].
+Application ID/Bundle IDs typically are defined using the reverse domain name notation
+Using localhost (or 127.0.0.1) is always permitted, and if empty all origins are allowed. Updates take 15 minutes to apply.
+
+If scheme or port is specified, it must match exactly. Hostname must also match exactly, but wildcards can be used for individual labels within the hostname.
+
+Example of possible origins in the allowlist:
+
+example.com - allows https://example.com or http://example.com but not https://www.example.com
+https://example.com - allows https://example.com but not http://example.com
+https://www.example.com - allows https://www.example.com but not https://example.com
+https://example.com:8080 - allows https://example.com:8080 but not https://example.com
+https://*.example.com - allows https://www.example.com but not https://example.com
+https://*.*.example.com - allows https://www.subdomain.example.com but not https://www.example.com or https://example.com
+https://www.*.example.com - allows https://www.subdomain.example.com but not https://www.example.com
+https://www-*.example.com - invalid; * must be the full label
+​
+Error Codes
+Reason	Error Code
+Project ID doesn’t exist OR JWT is expired	401
+Exists and is invalid	403
+Too many requests	1013
+​
+Websocket Close Codes
+Code	Description	Reconnect
+1001	Server terminating	Yes
+4008	Client stale: connected without a prior subscription and is not sending data	When needed
+4010	Load Rebalancing	Yes
+​
+Best Practices
+Create a new projectId for each project. This allows for more granular control, dedicated explorer listings, and project metrics.
+Don’t reuse a projectId.
+Use the AllowList to limit unauthorized usage.
+Avoid committing projects keys to the repo. Use env variables instead.
