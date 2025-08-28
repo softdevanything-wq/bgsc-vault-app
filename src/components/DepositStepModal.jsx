@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Icons from './Icons';
 import { t } from '../translations';
@@ -11,10 +11,22 @@ const ModalOverlay = styled.div`
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.8);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  /* iOS 안전 영역 대응 */
+  padding-top: max(20px, env(safe-area-inset-top, 20px));
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+  
+  /* 모바일에서 상단 여백 추가 */
+  @media (max-width: 768px) {
+    padding-top: max(40px, env(safe-area-inset-top, 40px));
+    align-items: flex-start;
+  }
 `;
 
 const ModalContent = styled.div`
@@ -26,6 +38,51 @@ const ModalContent = styled.div`
   position: relative;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: auto;
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px); /* 동적 뷰포트 높이 지원 */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  /* 모바일 최적화 */
+  @media (max-width: 768px) {
+    max-height: calc(100vh - 80px);
+    max-height: calc(100dvh - 80px);
+    padding: 20px;
+    margin-top: 20px;
+    
+    /* 메타마스크/트러스트월렛 인앱 브라우저 대응 */
+    @supports (-webkit-touch-callout: none) {
+      max-height: calc(100vh - 120px);
+      max-height: calc(100dvh - 120px);
+    }
+  }
+  
+  /* 작은 화면 대응 */
+  @media (max-height: 700px) {
+    max-height: calc(100vh - 60px);
+    max-height: calc(100dvh - 60px);
+    padding: 16px;
+  }
+  
+  /* 스크롤바 스타일링 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
 `;
 
 const CloseButton = styled.button`
@@ -50,6 +107,11 @@ const Title = styled.h2`
   color: #fff;
   margin-bottom: 16px;
   text-align: center;
+  
+  @media (max-width: 400px) {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
 `;
 
 const ProgressBar = styled.div`
@@ -168,6 +230,11 @@ const Notice = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   gap: 12px;
+  
+  @media (max-width: 400px) {
+    flex-direction: column;
+    gap: 8px;
+  }
 `;
 
 const Button = styled.button`
@@ -230,15 +297,51 @@ const AmountDisplay = styled.div`
     align-items: baseline;
     gap: 6px;
     
+    @media (max-width: 400px) {
+      font-size: 20px;
+    }
+    
     .unit {
       font-size: 14px;
       font-weight: 400;
       color: rgba(255, 255, 255, 0.7);
     }
   }
+  
+  @media (max-width: 400px) {
+    padding: 10px 12px;
+    margin-bottom: 16px;
+  }
 `;
 
 const DepositStepModal = ({ isOpen, onClose, onConfirm, step = 'approval', language = 'ko', depositAmount = '0' }) => {
+  // body 스크롤 제어
+  useEffect(() => {
+    if (isOpen) {
+      // 현재 스크롤 위치 저장
+      const scrollY = window.scrollY;
+      
+      // body 스크롤 비활성화
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      
+      // iOS bounce 효과 방지
+      document.documentElement.style.overflow = 'hidden';
+      
+      return () => {
+        // 스크롤 위치 복원
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const isApprovalStep = step === 'approval';
