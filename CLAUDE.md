@@ -104,3 +104,8 @@ The app uses multicall provider for efficient batch operations. When adding new 
 1. Use the multicall provider from `src/constants.js`
 2. Batch related calls together (max 50 per batch)
 3. Handle timeout scenarios (10-second timeout configured)
+
+## GitHub Repository
+
+- **Repository**: https://github.com/softdevanything-wq/bgsc-vault-app
+- **Remote Origin**: Configured with authentication token in git config
