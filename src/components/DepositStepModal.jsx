@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import Icons from './Icons';
 import { t } from '../translations';
@@ -10,22 +10,27 @@ const ModalOverlay = styled.div`
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
   z-index: 1000;
-  padding: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   
-  /* iOS 안전 영역 대응 */
+  /* Flexbox 대신 padding으로 중앙 정렬 */
+  padding: 20px;
   padding-top: max(20px, env(safe-area-inset-top, 20px));
-  padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+  padding-bottom: max(100px, env(safe-area-inset-bottom, 100px)); /* 하단 여백 충분히 확보 */
   
-  /* 모바일에서 상단 여백 추가 */
+  /* 모바일 최적화 */
   @media (max-width: 768px) {
-    padding-top: max(40px, env(safe-area-inset-top, 40px));
-    align-items: flex-start;
+    padding: 15px;
+    padding-top: max(30px, env(safe-area-inset-top, 30px));
+    padding-bottom: max(120px, env(safe-area-inset-bottom, 120px)); /* 모바일 하단 여백 더 크게 */
+  }
+  
+  /* 매우 작은 화면 */
+  @media (max-height: 600px) {
+    padding-top: 10px;
+    padding-bottom: 150px; /* 작은 화면에서는 하단 여백 더 크게 */
   }
 `;
 
@@ -33,55 +38,44 @@ const ModalContent = styled.div`
   background: #1a1f2e;
   border-radius: 16px;
   max-width: 480px;
-  width: 100%;
+  width: calc(100% - 20px);
   padding: 24px;
   position: relative;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  margin: auto;
-  max-height: calc(100vh - 40px);
-  max-height: calc(100dvh - 40px); /* 동적 뷰포트 높이 지원 */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  margin: 0 auto;
+  margin-bottom: 20px; /* 하단 여백 확보 */
+  
+  /* 높이 제한 제거 - 자연스럽게 콘텐츠만큼 늘어나도록 */
+  min-height: auto;
+  max-height: none;
   
   /* 모바일 최적화 */
   @media (max-width: 768px) {
-    max-height: calc(100vh - 80px);
-    max-height: calc(100dvh - 80px);
-    padding: 20px;
-    margin-top: 20px;
-    
-    /* 메타마스크/트러스트월렛 인앱 브라우저 대응 */
-    @supports (-webkit-touch-callout: none) {
-      max-height: calc(100vh - 120px);
-      max-height: calc(100dvh - 120px);
-    }
+    width: calc(100% - 10px);
+    padding: 18px;
+    margin-bottom: 30px;
   }
   
   /* 작은 화면 대응 */
   @media (max-height: 700px) {
-    max-height: calc(100vh - 60px);
-    max-height: calc(100dvh - 60px);
-    padding: 16px;
+    padding: 14px;
+    margin-bottom: 40px;
   }
   
-  /* 스크롤바 스타일링 */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
+  /* 매우 작은 화면 */
+  @media (max-height: 600px) {
+    padding: 12px;
+    margin-bottom: 50px;
     
-    &:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
+    /* 폰트 크기 조정 */
+    font-size: 14px;
+  }
+  
+  /* 가로 모드 대응 */
+  @media (orientation: landscape) and (max-height: 500px) {
+    padding: 10px;
+    margin-bottom: 60px;
   }
 `;
 
@@ -159,6 +153,11 @@ const StepsContainer = styled.div`
   flex-direction: column;
   gap: 16px;
   margin-bottom: 24px;
+  
+  @media (max-height: 600px) {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
 `;
 
 const StepCard = styled.div`
@@ -178,6 +177,11 @@ const StepCard = styled.div`
     border-color: #10b981;
     background: rgba(16, 185, 129, 0.05);
   `}
+  
+  @media (max-height: 600px) {
+    padding: 12px;
+    border-radius: 10px;
+  }
 `;
 
 const StepHeader = styled.div`
@@ -225,6 +229,12 @@ const Notice = styled.div`
   font-size: 13px;
   color: #f59e0b;
   line-height: 1.5;
+  
+  @media (max-height: 600px) {
+    padding: 10px;
+    margin-bottom: 16px;
+    font-size: 12px;
+  }
 `;
 
 const ButtonContainer = styled.div`
@@ -314,7 +324,31 @@ const AmountDisplay = styled.div`
   }
 `;
 
+const ScrollIndicator = styled.div`
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(140, 90, 255, 0.9);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 1001;
+  display: ${props => props.$show ? 'block' : 'none'};
+  animation: bounce 2s infinite;
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-10px); }
+  }
+`;
+
 const DepositStepModal = ({ isOpen, onClose, onConfirm, step = 'approval', language = 'ko', depositAmount = '0' }) => {
+  const overlayRef = useRef(null);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(false);
+  
   // body 스크롤 제어
   useEffect(() => {
     if (isOpen) {
@@ -330,6 +364,15 @@ const DepositStepModal = ({ isOpen, onClose, onConfirm, step = 'approval', langu
       // iOS bounce 효과 방지
       document.documentElement.style.overflow = 'hidden';
       
+      // 스크롤 가능 여부 체크
+      setTimeout(() => {
+        if (overlayRef.current) {
+          const hasScroll = overlayRef.current.scrollHeight > overlayRef.current.clientHeight;
+          const isAtBottom = overlayRef.current.scrollTop + overlayRef.current.clientHeight >= overlayRef.current.scrollHeight - 50;
+          setShowScrollIndicator(hasScroll && !isAtBottom);
+        }
+      }, 100);
+      
       return () => {
         // 스크롤 위치 복원
         document.body.style.position = '';
@@ -341,14 +384,32 @@ const DepositStepModal = ({ isOpen, onClose, onConfirm, step = 'approval', langu
       };
     }
   }, [isOpen]);
+  
+  // 스크롤 이벤트 처리
+  useEffect(() => {
+    const handleScroll = () => {
+      if (overlayRef.current) {
+        const isAtBottom = overlayRef.current.scrollTop + overlayRef.current.clientHeight >= overlayRef.current.scrollHeight - 50;
+        const hasScroll = overlayRef.current.scrollHeight > overlayRef.current.clientHeight;
+        setShowScrollIndicator(hasScroll && !isAtBottom);
+      }
+    };
+    
+    const overlay = overlayRef.current;
+    if (overlay) {
+      overlay.addEventListener('scroll', handleScroll);
+      return () => overlay.removeEventListener('scroll', handleScroll);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const isApprovalStep = step === 'approval';
   
   return (
-    <ModalOverlay onClick={onClose}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
+    <>
+      <ModalOverlay ref={overlayRef} onClick={onClose}>
+        <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>
           <Icons.X />
         </CloseButton>
@@ -442,6 +503,10 @@ const DepositStepModal = ({ isOpen, onClose, onConfirm, step = 'approval', langu
         </ButtonContainer>
       </ModalContent>
     </ModalOverlay>
+    <ScrollIndicator $show={showScrollIndicator}>
+      {language === 'ko' ? '↓ 아래로 스크롤하세요' : '↓ Scroll down'}
+    </ScrollIndicator>
+    </>
   );
 };
 
