@@ -948,28 +948,59 @@ export const getDynamicText = (language = 'ko') => {
   }
 };
 
-// ✅ 다음 라운드 시작 시간 계산 (매월 1일 00시)
-export const getNextRoundStartTime = (language = 'ko') => {
-  const now = new Date();
-  const kstNow = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // KST 시간으로 변환
+// ✅ UTC 시간 가져오기 (World Clock API 사용)
+export const getUTCTime = async () => {
+  try {
+    const response = await fetch('https://worldclockapi.com/api/json/utc/now');
+    const data = await response.json();
+    // API 응답의 currentDateTime을 Date 객체로 변환
+    return new Date(data.currentDateTime + 'Z');
+  } catch (error) {
+    console.error('Failed to fetch UTC time:', error);
+    // 폴백: 로컬 시간 사용 (정확도 떨어짐)
+    return new Date();
+  }
+};
+
+// ✅ 다음 라운드 시작 시간 계산 (매달 마지막일 00시 KST = 다음달 1일 00:00)
+export const getNextRoundStartTime = (language = 'ko', currentTime = null) => {
+  // currentTime이 제공되지 않으면 로컬 시간 사용
+  const now = currentTime || new Date();
+  const currentTimeUTC = now.getTime();
   
-  // 다음 달 1일 00시 (KST) 계산
-  let nextRound = new Date(kstNow);
-  nextRound.setMonth(nextRound.getMonth() + 1);
-  nextRound.setDate(1);
-  nextRound.setHours(0, 0, 0, 0);
+  // 현재 UTC 시간을 KST로 변환 (UTC + 9시간)
+  const currentKST = new Date(currentTimeUTC + (9 * 60 * 60 * 1000));
   
-  // 만약 현재가 1일 00시 이전이라면 이번 달 1일 00시가 다음 라운드
-  const thisMonth = new Date(kstNow);
-  thisMonth.setDate(1);
-  thisMonth.setHours(0, 0, 0, 0);
+  // 오늘이 이번 달 마지막 날인지 확인
+  const today = new Date(currentKST);
+  const tomorrow = new Date(currentKST);
+  tomorrow.setDate(tomorrow.getDate() + 1);
   
-  if (kstNow < thisMonth) {
-    nextRound = thisMonth;
+  let nextRoundKST;
+  
+  // 내일이 다음 달 1일이면 오늘이 마지막 날
+  if (tomorrow.getDate() === 1) {
+    // 오늘 밤 자정 (다음날 00:00)이 라운드 종료
+    nextRoundKST = new Date(today);
+    nextRoundKST.setDate(nextRoundKST.getDate() + 1); // 내일(다음달 1일)
+    nextRoundKST.setHours(0, 0, 0, 0);
+  } else {
+    // 이번 달 마지막일 찾기
+    nextRoundKST = new Date(currentKST);
+    nextRoundKST.setMonth(nextRoundKST.getMonth() + 1);
+    nextRoundKST.setDate(1); // 다음 달 1일
+    nextRoundKST.setHours(0, 0, 0, 0);
+  }
+  
+  // 이미 라운드가 종료되었다면 다음 달 마지막일로 설정
+  if (currentKST >= nextRoundKST) {
+    nextRoundKST.setMonth(nextRoundKST.getMonth() + 1);
+    nextRoundKST.setDate(1); // 다다음 달 1일
+    nextRoundKST.setHours(0, 0, 0, 0);
   }
   
   // 남은 시간 계산
-  const diff = nextRound - kstNow;
+  const diff = nextRoundKST.getTime() - currentKST.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -980,16 +1011,17 @@ export const getNextRoundStartTime = (language = 'ko') => {
     en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   };
   
+  // nextRoundKST는 이미 KST 시간 (다음달 1일)
   const formattedDate = language === 'ko' 
-    ? `${monthNames.ko[nextRound.getMonth()]} 1일 00시`
-    : `${monthNames.en[nextRound.getMonth()]} 1st, 00:00`;
+    ? `${monthNames.ko[nextRoundKST.getMonth()]} 1일 00시`
+    : `${monthNames.en[nextRoundKST.getMonth()]} 1st, 00:00`;
     
   const timeLeft = language === 'ko'
     ? days > 0 ? `${days}일 ${hours}시간` : `${hours}시간 ${minutes}분`
     : days > 0 ? `${days}d ${hours}h` : `${hours}h ${minutes}m`;
   
   return {
-    nextRoundDate: nextRound,
+    nextRoundDate: nextRoundKST,
     timeLeft,
     formattedDate
   };

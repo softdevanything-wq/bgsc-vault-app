@@ -1602,34 +1602,102 @@ export const useRoundCountdown = () => {
     isDepositLocked: false,
     timeLeft: '',
   });
+  const [timeSync, setTimeSync] = useState(null);
+  const [isTimeSynced, setIsTimeSynced] = useState(false);
+
+  // TimeSync 동적 import 및 초기화
+  useEffect(() => {
+    let mounted = true;
+    
+    const initTimeSync = async () => {
+      try {
+        const { default: timeSyncModule } = await import('./utils/timeSync');
+        if (!mounted) return;
+        
+        await timeSyncModule.initialize();
+        setTimeSync(timeSyncModule);
+        setIsTimeSynced(true);
+        console.log('TimeSync initialized');
+      } catch (error) {
+        console.error('Failed to initialize TimeSync:', error);
+        // Fallback to local time
+        setIsTimeSynced(true);
+      }
+    };
+    
+    initTimeSync();
+    
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
+    if (!isTimeSynced) return; // TimeSync 초기화 전에는 실행하지 않음
+
     const updateCountdown = () => {
-      const now = new Date();
-      
-      // UTC 시간을 구하고 KST로 변환 (UTC + 9시간)
-      const utcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
-      const kstTime = utcTime + (9 * 60 * 60 * 1000);
-      const kstNow = new Date(kstTime);
-      
-      // 다음 달 1일 00시 (KST) 계산
-      let nextRound = new Date(kstNow);
-      nextRound.setMonth(nextRound.getMonth() + 1);
-      nextRound.setDate(1);
-      nextRound.setHours(0, 0, 0, 0);
-      
-      // 만약 현재가 1일 00시 이전이라면 이번 달 1일 00시가 다음 라운드
-      const thisMonth = new Date(kstNow);
-      thisMonth.setDate(1);
-      thisMonth.setHours(0, 0, 0, 0);
-      
-      if (kstNow < thisMonth) {
-        nextRound = thisMonth;
+      // TimeSync가 없으면 로컬 시간 사용 (fallback)
+      if (!timeSync) {
+        // 로컬 시간 기반 계산 (기존 로직)
+        const now = new Date();
+        const currentTimeUTC = now.getTime();
+        
+        // KST 오프셋을 고려한 계산 (UTC + 9시간)
+        const kstOffset = 9 * 60 * 60 * 1000;
+        const kstTime = new Date(currentTimeUTC + kstOffset);
+        const kstYear = kstTime.getUTCFullYear();
+        const kstMonth = kstTime.getUTCMonth();
+        const kstDate = kstTime.getUTCDate();
+        
+        // 이번 달 마지막 날 찾기
+        const lastDayOfMonth = new Date(Date.UTC(kstYear, kstMonth + 1, 0));
+        const isLastDay = kstDate === lastDayOfMonth.getUTCDate();
+        
+        let nextRoundUTC;
+        if (isLastDay) {
+          nextRoundUTC = Date.UTC(kstYear, kstMonth + 1, 1, 0, 0, 0, 0) - kstOffset;
+        } else {
+          nextRoundUTC = Date.UTC(kstYear, kstMonth + 1, 1, 0, 0, 0, 0) - kstOffset;
+        }
+        
+        if (currentTimeUTC >= nextRoundUTC) {
+          const nextMonth = kstMonth + 2;
+          const nextYear = nextMonth > 11 ? kstYear + 1 : kstYear;
+          const adjustedMonth = nextMonth > 11 ? 0 : nextMonth;
+          nextRoundUTC = Date.UTC(nextYear, adjustedMonth, 1, 0, 0, 0, 0) - kstOffset;
+        }
+        
+        const diff = nextRoundUTC - currentTimeUTC;
+        const totalSeconds = Math.max(0, Math.floor(diff / 1000));
+        const isDepositLocked = totalSeconds <= 3600;
+        
+        const days = Math.floor(totalSeconds / (24 * 60 * 60));
+        const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+        const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+        const seconds = totalSeconds % 60;
+        const totalHours = days * 24 + hours;
+        
+        setCountdown({
+          days,
+          hours: totalHours,
+          minutes,
+          seconds,
+          totalSeconds,
+          isRoundActive: true,
+          isDepositLocked,
+          timeLeft: `${totalHours}h ${minutes}m ${seconds}s`,
+        });
+        
+        return;
       }
       
-      // 남은 시간 계산
-      const diff = nextRound - kstNow;
-      const totalSeconds = Math.max(0, Math.floor(diff / 1000));
+      // TimeSync를 사용하여 정확한 시간 계산
+      const totalSeconds = timeSync.getSecondsUntilRoundEnd();
+      const isDepositLocked = timeSync.isDepositLocked();
+      
+      // 디버깅 정보
+      const debugInfo = timeSync.getDebugInfo();
+      console.log('Round Countdown (TimeSync):', debugInfo);
       
       const days = Math.floor(totalSeconds / (24 * 60 * 60));
       const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
@@ -1638,9 +1706,6 @@ export const useRoundCountdown = () => {
       
       // 총 시간 계산 (일수 * 24 + 시간)
       const totalHours = days * 24 + hours;
-      
-      // 라운드 종료 1시간 전부터 예치 차단
-      const isDepositLocked = totalSeconds <= 3600; // 1시간 = 3600초
       
       setCountdown({
         days,
@@ -1657,7 +1722,7 @@ export const useRoundCountdown = () => {
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isTimeSynced, timeSync]); // TimeSync가 초기화된 후에 타이머 시작
 
   return countdown;
 };

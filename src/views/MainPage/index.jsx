@@ -1428,16 +1428,16 @@ export default function MainPage() {
                                 const monthlyReturn = adjustedTVL > 0n ? (roundRewardPool * 10000n) / adjustedTVL : 0n;
                                 const monthlyRate = Number(monthlyReturn) / 100;
                                 
-                                // 디버깅용 로그
-                                console.log('APY Calculation:', {
-                                  actualRound: actualRound,
-                                  displayRound: currentRound,
-                                  totalTVL: formatAmount(totalTVL, vaultInfo.decimals),
-                                  accumulatedBonus: formatAmount(accumulatedBonus, vaultInfo.decimals),
-                                  adjustedTVL: formatAmount(adjustedTVL, vaultInfo.decimals),
-                                  roundRewardPool: formatAmount(roundRewardPool, vaultInfo.decimals),
-                                  monthlyRate: monthlyRate.toFixed(2) + '%'
-                                });
+                                // 디버깅용 로그 (제거 - 너무 자주 실행됨)
+                                // console.log('APY Calculation:', {
+                                //   actualRound: actualRound,
+                                //   displayRound: currentRound,
+                                //   totalTVL: formatAmount(totalTVL, vaultInfo.decimals),
+                                //   accumulatedBonus: formatAmount(accumulatedBonus, vaultInfo.decimals),
+                                //   adjustedTVL: formatAmount(adjustedTVL, vaultInfo.decimals),
+                                //   roundRewardPool: formatAmount(roundRewardPool, vaultInfo.decimals),
+                                //   monthlyRate: monthlyRate.toFixed(2) + '%'
+                                // });
                                 
                                 const monthlyText = language === 'ko' ? '월 ' : 'M ';
                                 return (
@@ -1612,10 +1612,10 @@ export default function MainPage() {
                     : 'Deposits are suspended 1 hour before round ends.'
                   }
                 </p>
-                <p className="lock-info">
+                <p className="lock-info" style={{ whiteSpace: 'pre-line' }}>
                   {language === 'ko' 
-                    ? '다음 라운드는 ' + getNextRoundStartTime(language).formattedDate + '에 시작됩니다.'
-                    : 'Next round starts on ' + getNextRoundStartTime(language).formattedDate
+                    ? '다음 라운드는 롤링 과정이 끝난 이후 시작됩니다.\n다음날 확인해 주세요.'
+                    : 'Next round will start after the rolling process.\nPlease check tomorrow.'
                   }
                 </p>
               </div>
@@ -1870,6 +1870,33 @@ export default function MainPage() {
         <div className="tab-content-wrapper">
           {!isConnected ? (
             <WalletDisconnectedAlert />
+          ) : countdown.isDepositLocked ? (
+            // 라운드 종료 1시간 전 - 수령 차단 화면만 표시
+            <div className="main-content">
+              <div className="deposit-locked-standalone">
+                <div className="lock-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3 className="lock-title">
+                  {language === 'ko' ? '마감됨, 라운드 롤링 처리 대기 중' : 'Round Rolling Processing'}
+                </h3>
+                <p className="lock-description">
+                  {language === 'ko' 
+                    ? '종료 1시간 전부터는 수령이 중단됩니다.'
+                    : 'Redemption is suspended 1 hour before round ends.'
+                  }
+                </p>
+                <p className="lock-info" style={{ whiteSpace: 'pre-line' }}>
+                  {language === 'ko' 
+                    ? '다음 라운드는 롤링 과정이 끝난 이후 시작됩니다.\n다음날 확인해 주세요.'
+                    : 'Next round will start after the rolling process.\nPlease check tomorrow.'
+                  }
+                </p>
+              </div>
+            </div>
           ) : (
           <div className="main-content">
             <div className="form-card">
@@ -2034,6 +2061,33 @@ export default function MainPage() {
         <div className="tab-content-wrapper">
           {!isConnected ? (
             <WalletDisconnectedAlert />
+          ) : countdown.isDepositLocked ? (
+            // 라운드 종료 1시간 전 - 변환 차단 화면만 표시
+            <div className="main-content">
+              <div className="deposit-locked-standalone">
+                <div className="lock-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3 className="lock-title">
+                  {language === 'ko' ? '마감됨, 라운드 롤링 처리 대기 중' : 'Round Rolling Processing'}
+                </h3>
+                <p className="lock-description">
+                  {language === 'ko' 
+                    ? '종료 1시간 전부터는 변환이 중단됩니다.'
+                    : 'Conversion is suspended 1 hour before round ends.'
+                  }
+                </p>
+                <p className="lock-info" style={{ whiteSpace: 'pre-line' }}>
+                  {language === 'ko' 
+                    ? '다음 라운드는 롤링 과정이 끝난 이후 시작됩니다.\n다음날 확인해 주세요.'
+                    : 'Next round will start after the rolling process.\nPlease check tomorrow.'
+                  }
+                </p>
+              </div>
+            </div>
           ) : (
           <div className="main-content">
             <div className="form-card">
@@ -2205,6 +2259,33 @@ export default function MainPage() {
         <div className="tab-content-wrapper">
           {!isConnected ? (
             <WalletDisconnectedAlert />
+          ) : countdown.isDepositLocked ? (
+            // 라운드 종료 1시간 전 - 출금 차단 화면만 표시
+            <div className="main-content">
+              <div className="deposit-locked-standalone">
+                <div className="lock-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3 className="lock-title">
+                  {language === 'ko' ? '마감됨, 라운드 롤링 처리 대기 중' : 'Round Rolling Processing'}
+                </h3>
+                <p className="lock-description">
+                  {language === 'ko' 
+                    ? '종료 1시간 전부터는 출금이 중단됩니다.'
+                    : 'Withdrawal is suspended 1 hour before round ends.'
+                  }
+                </p>
+                <p className="lock-info" style={{ whiteSpace: 'pre-line' }}>
+                  {language === 'ko' 
+                    ? '다음 라운드는 롤링 과정이 끝난 이후 시작됩니다.\n다음날 확인해 주세요.'
+                    : 'Next round will start after the rolling process.\nPlease check tomorrow.'
+                  }
+                </p>
+              </div>
+            </div>
           ) : (
           <div className="main-content">
             <div className="form-card">
