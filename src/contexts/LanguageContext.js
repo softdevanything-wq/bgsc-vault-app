@@ -13,7 +13,7 @@ export const useLanguage = () => {
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(() => {
     const savedLang = localStorage.getItem('bgsc-vault-language');
-    return savedLang || 'ko';
+    return savedLang || 'en';
   });
 
   useEffect(() => {
