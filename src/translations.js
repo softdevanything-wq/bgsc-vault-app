@@ -518,7 +518,7 @@ export const translations = {
       
       withdraw: {
         step1Title: '3. 포인트 변환 요청',
-        step1Description: '포인트 변환 요청시 다음 {duration} 라운드에서 BGSC로 변환됩니다. 라운드 전환 이후 볼트에서 BGSC 출금이 가능합니다.\n\n⚠️ 주의: 포인트 변환 요청은 다음 라운드 볼트 참여를 취소하는 것과 같습니다.\n컨트랙트 요청 후에는 절대 취소가 불가능합니다! \n신중하게 결정해주세요.',
+        step1Description: '포인트 변환 요청시 다음 월간 라운드에서 BGSC로 변환됩니다. 다음 라운드 {nextRoundDate} 이후 볼트에서 BGSC 출금이 가능합니다.\n\n⚠️ 주의: 포인트 변환 요청은 다음 라운드 볼트 참여를 취소하는 것과 같습니다.\n컨트랙트 요청 후에는 절대 취소가 불가능합니다! \n신중하게 결정해주세요.',
         yourPoints: '내 포인트',
         yourPointsLabel: '내 포인트',
         currentPoints: '현재 보유 포인트',
@@ -1227,7 +1227,7 @@ export const translations = {
       
       withdraw: {
         step1Title: 'Request Point Conversion',
-        step1Description: 'Place your Points in the withdrawal queue for conversion to BGSC in the next {duration} round. After conversion, you can withdraw BGSC from the vault.\n\n⚠️ WARNING: Point conversion request is equivalent to canceling your next round vault participation.\nConversion requests are IRREVERSIBLE! Once submitted, you cannot cancel. Please decide carefully.',
+        step1Description: 'Place your Points in the withdrawal queue for conversion to BGSC in the next monthly round. After {nextRoundDate}, you can withdraw BGSC from the vault.\n\n⚠️ WARNING: Point conversion request is equivalent to canceling your next round vault participation.\nConversion requests are IRREVERSIBLE! Once submitted, you cannot cancel. Please decide carefully.',
         yourPoints: 'Your Points',
         yourPointsLabel: 'Your Points',
         currentPoints: 'Current Points held',

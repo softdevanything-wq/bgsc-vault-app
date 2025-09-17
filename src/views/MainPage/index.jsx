@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 import { parseUnits } from "ethers";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { t } from "../../translations";
-import HeaderLanguageToggle from "../../components/HeaderLanguageToggle";
 import DepositStepModal from "../../components/DepositStepModal";
 import WalletDisconnectedAlert from "../../components/WalletDisconnectedAlert";
 
@@ -985,7 +984,6 @@ export default function MainPage() {
 
           {!isMobile && (
             <div className="wallet-section desktop-only">
-              <HeaderLanguageToggle />
               <div className="event-badge">
                 <div className="event-dot" />
                 <span className="event-text">{livePrice} {t('main.stats.bgscPerPoint', language)} </span>
@@ -1039,11 +1037,6 @@ export default function MainPage() {
                   showBalance={false}
                 />
               )}
-            </div>
-          )}
-          {isMobile && (
-            <div className="mobile-header-right mobile-only">
-              <HeaderLanguageToggle />
             </div>
           )}
         </div>
@@ -1265,13 +1258,13 @@ export default function MainPage() {
                           <div className="reward-content">
                             <h3 className="reward-label">{language === 'ko' ? '총 보상 풀' : 'Total Reward Pool'}</h3>
                             <div className="reward-amount">
-                              <span className="amount-number">650,000,000</span>
+                              <span className="amount-number">350,000,000</span>
                               <span className="amount-unit">BGSC</span>
                             </div>
                             <div className="reward-details">
                               {language === 'ko' 
-                                ? '총 6라운드 • 라운드당 100,000,000 BGSC' 
-                                : 'Total 6 Rounds • 100M BGSC per round'}
+                                ? '총 3라운드 • 라운드당 100,000,000 BGSC' 
+                                : 'Total 3 Rounds • 100M BGSC per round'}
                             </div>
                           </div>
                         </div>
@@ -2094,7 +2087,18 @@ export default function MainPage() {
               <div className="form-header">
                 <h2 className="form-title">{t('main.withdraw.step1Title', language)}</h2>
                 <p className="form-description withdraw-description" style={{ whiteSpace: 'pre-line' }}>
-                  {t('main.withdraw.step1Description', language, { duration: dynamicText.roundDuration }).split('\n\n').map((text, index) => (
+                  {(() => {
+                    const nextRound = getNextRoundStartTime(language);
+                    const date = nextRound.nextRoundDate;
+                    const monthNames = {
+                      ko: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                      en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                    };
+                    const nextRoundDateStr = language === 'ko' 
+                      ? `${monthNames.ko[date.getMonth()]} ${date.getDate()}일`
+                      : `${monthNames.en[date.getMonth()]} ${date.getDate()}`;
+                    
+                    return t('main.withdraw.step1Description', language, { nextRoundDate: nextRoundDateStr }).split('\n\n').map((text, index) => (
                     index === 1 ? (
                       <span key={index} style={{ 
                         display: 'block', 
@@ -2112,7 +2116,8 @@ export default function MainPage() {
                     ) : (
                       <span key={index}>{text}</span>
                     )
-                  ))}
+                  ));
+                  })()}
                 </p>
               </div>
 
@@ -2361,9 +2366,20 @@ export default function MainPage() {
                             vaultInfo.decimals
                           )
                         )}{" "}
-                        {language === 'ko' 
-                          ? `포인트가 Round ${userBalance.withdrawalRound - 1}에서 BGSC로 변환 대기`
-                          : `Points pending conversion to BGSC in Round ${userBalance.withdrawalRound - 1}.`}
+                        {(() => {
+                          const nextRound = getNextRoundStartTime(language);
+                          const date = nextRound.nextRoundDate;
+                          const monthNames = {
+                            ko: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                            en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                          };
+                          
+                          if (language === 'ko') {
+                            return `포인트가 ${monthNames.ko[date.getMonth()]} ${date.getDate()}일에 BGSC로 변환 후 출금 가능`;
+                          } else {
+                            return `Points will be converted to BGSC on ${monthNames.en[date.getMonth()]} ${date.getDate()} for withdrawal.`;
+                          }
+                        })()}
                       </div>
                     </div>
                   </>

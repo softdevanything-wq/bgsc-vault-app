@@ -11,25 +11,14 @@ export const useLanguage = () => {
 };
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState(() => {
-    const savedLang = localStorage.getItem('bgsc-vault-language');
-    return savedLang || 'en';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('bgsc-vault-language', language);
-  }, [language]);
-
-  const toggleLanguage = () => {
-    setLanguage(prev => prev === 'ko' ? 'en' : 'ko');
-  };
+  const language = 'en'; // Fixed to English only
 
   const value = {
     language,
-    setLanguage,
-    toggleLanguage,
-    isKorean: language === 'ko',
-    isEnglish: language === 'en'
+    setLanguage: () => {}, // No-op function
+    toggleLanguage: () => {}, // No-op function
+    isKorean: false,
+    isEnglish: true
   };
 
   return (
