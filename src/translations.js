@@ -518,7 +518,7 @@ export const translations = {
       
       withdraw: {
         step1Title: '3. 포인트 변환 요청',
-        step1Description: '포인트 변환 요청시 다음 월간 라운드에서 BGSC로 변환됩니다. 다음 라운드 {nextRoundDate} 이후 볼트에서 BGSC 출금이 가능합니다.\n\n⚠️ 주의: 포인트 변환 요청은 다음 라운드 볼트 참여를 취소하는 것과 같습니다.\n컨트랙트 요청 후에는 절대 취소가 불가능합니다! \n신중하게 결정해주세요.',
+        step1Description: '포인트 변환 요청시 다음 월간 라운드에서 BGSC로 변환됩니다. 최종 라운드 {nextRoundDate} 이후 볼트에서 BGSC 출금이 가능합니다.\n\n⚠️ 주의: 마감 라운드 롤링 전에, 마지막 포인트 변환 요청을 반드시 실행하세요.',
         yourPoints: '내 포인트',
         yourPointsLabel: '내 포인트',
         currentPoints: '현재 보유 포인트',
@@ -1074,8 +1074,8 @@ export const translations = {
       tabs: {
         deposit: 'Deposit',
         redeem: 'Redeem',
-        convert: 'Convert Points',
-        withdraw: 'Withdraw BGSC',
+        convert: 'Convert',
+        withdraw: 'Withdraw',
         mypage: 'My Info',
       },
       

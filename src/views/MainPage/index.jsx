@@ -9,6 +9,7 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import { t } from "../../translations";
 import DepositStepModal from "../../components/DepositStepModal";
 import WalletDisconnectedAlert from "../../components/WalletDisconnectedAlert";
+import HeaderLanguageToggle from "../../components/HeaderLanguageToggle";
 
 import iconArrowRightSmall from "assets/icon-arrow-right-small.svg";
 import textLogo from "assets/text_logo.png";
@@ -975,7 +976,9 @@ export default function MainPage() {
             <div className="logo-right">
               <img src={`${process.env.PUBLIC_URL}/logo-text.png`} className="logo-text" alt="Logo" />
               <div className="logo-info">
-                <span>{t('main.stats.round', language)} {vaultInfo.currentRound - 2}</span>
+                <span style={{ color: '#FFC107', fontWeight: 'bold' }}>
+                  {language === 'ko' ? '마감 롤링' : 'Final Rolling'}
+                </span>
                 <span>{t('main.stats.next', language)}: {nextRoundInfo.formattedDate}</span>
                 <span className="live-trading-highlight">{t('main.stats.liveTrading', language)}</span>
               </div>
@@ -984,6 +987,7 @@ export default function MainPage() {
 
           {!isMobile && (
             <div className="wallet-section desktop-only">
+              <HeaderLanguageToggle />
               <div className="event-badge">
                 <div className="event-dot" />
                 <span className="event-text">{livePrice} {t('main.stats.bgscPerPoint', language)} </span>
@@ -1263,8 +1267,8 @@ export default function MainPage() {
                             </div>
                             <div className="reward-details">
                               {language === 'ko' 
-                                ? '총 3라운드 • 라운드당 100,000,000 BGSC' 
-                                : 'Total 3 Rounds • 100M BGSC per round'}
+                                ? '총 350,000,000 BGSC' 
+                                : 'Total 350,000,000 BGSC'}
                             </div>
                           </div>
                         </div>
@@ -1336,9 +1340,9 @@ export default function MainPage() {
                             </svg>
 
                             <span className="round-label">
-                              {language === 'ko' ? `${(vaultInfo.currentRound || 2) - 2}라운드` : `Round ${(vaultInfo.currentRound || 2) - 2}`}
+                              {language === 'ko' ? '최종 마감 롤링' : 'Final Rolling'}
                             </span>
-                            <span className="round-badge">ACTIVE</span>
+                            <span className="round-badge">FINAL</span>
                           </div>
                           <div className="timer-countdown">
                             <div className="time-unit">
@@ -1357,9 +1361,9 @@ export default function MainPage() {
                             </div>
                           </div>
                           <div className="timer-footer">
-                            {language === 'ko' ? '라운드 종료까지' : 'Until round ends'}
+                            {language === 'ko' ? '최종 출금 종료까지' : 'Until final ends'}
                             <span style={{ fontSize: '12px', opacity: 0.88, marginLeft: '8px' }}>
-                              {language === 'ko' ? '(종료 1시간 전 예치 및 취소 마감)' : '(Deposit tap close 1hr before)'}
+                              {language === 'ko' ? '(최종 변환 마감까지)' : '(Convert finish)'}
                             </span>
                           </div>
                         </div>
@@ -1380,7 +1384,7 @@ export default function MainPage() {
                               </defs>
                             </svg>
 
-                            <span className="apy-label">{language === 'ko' ? '현재 예치 수량 기준 (1개월) 수익률' : 'Current deposit based (1m) return'}</span>
+                            <span className="apy-label">{language === 'ko' ? '최종 라운드 까지의 예상 수익률' : 'Expected Remaining Until Last Round'}</span>
                           </div>
                           <div className="apy-display">
                             <span className="apy-number">
@@ -1432,7 +1436,7 @@ export default function MainPage() {
                                 //   monthlyRate: monthlyRate.toFixed(2) + '%'
                                 // });
                                 
-                                const monthlyText = language === 'ko' ? '월 ' : 'M ';
+                                const monthlyText = language === 'ko' ? '+ ' : '+ ';
                                 return (
                                   <>
                                     <span style={{ fontSize: '0.6em', fontWeight: 'normal' }}>{monthlyText}</span>
@@ -1449,7 +1453,7 @@ export default function MainPage() {
                             )}
                           </div>
                           <div className="apy-subtitle">
-                            {language === 'ko' ? '현재 예치 수량 기준 월 수익률(변동)' : 'Current Deposit Quantities (Varying)'}
+                            {language === 'ko' ? '현재 수량 기준, 최종 라운드까지 수익률(변동)' : 'Current Deposit Quantities (Varying)'}
                           </div>
                         </div>
                       </div>
@@ -1478,10 +1482,10 @@ export default function MainPage() {
                         <path fillRule="evenodd" clipRule="evenodd" d="M11 8.2C10.6817 8.2 10.3765 8.07357 10.1515 7.84853C9.92643 7.62348 9.8 7.31826 9.8 7C9.8 6.68174 9.92643 6.37652 10.1515 6.15147C10.3765 5.92643 10.6817 5.8 11 5.8C11.3183 5.8 11.6235 5.92643 11.8485 6.15147C12.0736 6.37652 12.2 6.68174 12.2 7C12.2 7.31826 12.0736 7.62348 11.8485 7.84853C11.6235 8.07357 11.3183 8.2 11 8.2ZM12 15.635C12 15.9002 11.8946 16.1546 11.7071 16.3421C11.5196 16.5296 11.2652 16.635 11 16.635C10.7348 16.635 10.4804 16.5296 10.2929 16.3421C10.1054 16.1546 10 15.9002 10 15.635V10.635C10 10.3698 10.1054 10.1154 10.2929 9.92789C10.4804 9.74036 10.7348 9.635 11 9.635C11.2652 9.635 11.5196 9.74036 11.7071 9.92789C11.8946 10.1154 12 10.3698 12 10.635V15.635ZM11 0C4.925 0 0 4.925 0 11C0 17.075 4.925 22 11 22C17.075 22 22 17.075 22 11C22 4.925 17.075 0 11 0Z" fill="#6C52FF"/>
                       </svg>
                     </div>
-                    <span className="notice-text">
-                      {language === 'ko' 
-                        ? 'BGSC 예치 후 라운드 전환 1시간 전까지 자유롭게 취소 가능 (보상 미지급)' 
-                        : 'BGSC deposits can be cancelled freely 1 hour before round rolling (no rewards)'}
+                    <span className="notice-text" style={{ color: '#FFC107', fontWeight: 'bold' }}>
+                      {language === 'ko'
+                        ? '최종 라운드 진행 중! 마감 롤링전 포인트 수령 및 변환을 반드시 신청하세요!'
+                        : 'Final round in progress! You MUST apply for point redemption and conversion!'}
                     </span>
                   </div>
                   )}
@@ -1586,34 +1590,81 @@ export default function MainPage() {
         <div className="tab-content-wrapper">
           {!isConnected ? (
             <WalletDisconnectedAlert />
-          ) : countdown.isDepositLocked ? (
-            // 라운드 종료 1시간 전 - 예치 차단 화면만 표시
+          ) : (
+            // 신규 예치 서비스 종료 안내
             <div className="main-content deposit-withdraw-container">
               <div className="deposit-locked-standalone">
                 <div className="lock-icon">
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 2L2 7V12C2 16.5 5 20.7 12 22C19 20.7 22 16.5 22 12V7L12 2Z" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M9 12L11 14L15 10" stroke="#8C5AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <h3 className="lock-title">
-                  {language === 'ko' ? '마감됨, 라운드 롤링 처리 대기 중' : 'Round Rolling Processing'}
+                <h3 className="lock-title" style={{ fontSize: '24px', marginBottom: '16px' }}>
+                  {language === 'ko' ? '신규 예치 서비스 마감' : 'Deposit Service Closed'}
                 </h3>
-                <p className="lock-description">
-                  {language === 'ko' 
-                    ? '종료 1시간 전부터는 예치 및 취소가 중단됩니다.'
-                    : 'Deposits are suspended 1 hour before round ends.'
+                <p className="lock-description" style={{ fontSize: '16px', marginBottom: '20px' }}>
+                  {language === 'ko'
+                    ? '볼트 프로토콜의 신규 예치 서비스가 마감되었습니다.'
+                    : 'The vault protocol deposit service has been closed.'
                   }
                 </p>
-                <p className="lock-info" style={{ whiteSpace: 'pre-line' }}>
-                  {language === 'ko' 
-                    ? '다음 라운드는 롤링 과정이 끝난 이후 시작됩니다.\n다음날 확인해 주세요.'
-                    : 'Next round will start after the rolling process.\nPlease check tomorrow.'
-                  }
-                </p>
+                <div className="info-box" style={{
+                  backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                  border: '1px solid rgba(255, 193, 7, 0.3)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  marginBottom: '20px'
+                }}>
+                  <p style={{ color: '#FFC107', fontWeight: 'bold', marginBottom: '12px' }}>
+                    {language === 'ko' ? '중요 안내' : 'Important Notice'}
+                  </p>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    <li style={{ marginBottom: '8px' }}>
+                      {language === 'ko'
+                        ? '• 5라운드는 진행하지 않습니다.'
+                        : '• Round 5 will not proceed'
+                      }
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      {language === 'ko'
+                        ? '• 10월 1일 이후 전액 변환 신청이 가능합니다.'
+                        : '• Full conversion available after October 1st'
+                      }
+                    </li>
+                    <li style={{ fontWeight: 'bold', color: '#FFC107' }}>
+                      {language === 'ko'
+                        ? '• 포인트 수령 및 변환 탭에서 반드시 신청하세요!'
+                        : '• You MUST apply in the Redeem & Convert tabs!'
+                      }
+                    </li>
+                  </ul>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  marginTop: '24px',
+                  justifyContent: 'center'
+                }}>
+                  <button
+                    className="action-button secondary"
+                    onClick={() => setActiveTab('redeem')}
+                    style={{ minWidth: '140px' }}
+                  >
+                    {language === 'ko' ? '포인트 수령' : 'Redeem Points'}
+                  </button>
+                  <button
+                    className="action-button primary"
+                    onClick={() => setActiveTab('convert')}
+                    style={{ minWidth: '140px' }}
+                  >
+                    {language === 'ko' ? '변환 신청' : 'Convert'}
+                  </button>
+                </div>
               </div>
             </div>
-          ) : (
+          )}
+          {false && (
             // 정상 시간 - 예치 폼 표시
             <div className="main-content deposit-withdraw-container">
             <div className="form-card deposit-card">
@@ -1898,6 +1949,24 @@ export default function MainPage() {
                 <p className="form-description redeem-description">
                   {t('main.redeem.description', language)}
                 </p>
+                <div className="info-box" style={{
+                  backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                  border: '1px solid rgba(255, 193, 7, 0.3)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  marginTop: '16px',
+                  marginBottom: '16px'
+                }}>
+                  <p style={{ color: '#FFC107', fontWeight: 'bold', fontSize: '16px', margin: 0 }}>
+                    {language === 'ko' ? '⚠️ 반드시 신청하세요!' : '⚠️ MUST Apply!'}
+                  </p>
+                  <p style={{ color: '#FFC107', fontSize: '14px', marginTop: '8px', marginBottom: 0 }}>
+                    {language === 'ko'
+                      ? '포인트 수령은 필수 절차입니다. 신청하지 않으면 출금이 불가능합니다.'
+                      : 'Point redemption is mandatory. You cannot withdraw without applying.'
+                    }
+                  </p>
+                </div>
                 <div style={{ marginTop: '16px', fontSize: '16px', color: '#999999' }}>
                   {language === 'ko' ? '포인트수령 까지 남은시간: ' : 'Time remaining until point collection: '}
                   <span style={{ fontSize: '24px', fontWeight: '700', color: '#FFFFFF' }}>
@@ -2086,6 +2155,24 @@ export default function MainPage() {
             <div className="form-card">
               <div className="form-header">
                 <h2 className="form-title">{t('main.withdraw.step1Title', language)}</h2>
+                <div className="info-box" style={{
+                  backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                  border: '1px solid rgba(255, 193, 7, 0.3)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  marginTop: '16px',
+                  marginBottom: '16px'
+                }}>
+                  <p style={{ color: '#FFC107', fontWeight: 'bold', fontSize: '16px', margin: 0 }}>
+                    {language === 'ko' ? '⚠️ 반드시 신청하세요!' : '⚠️ MUST Apply!'}
+                  </p>
+                  <p style={{ color: '#FFC107', fontSize: '14px', marginTop: '8px', marginBottom: 0 }}>
+                    {language === 'ko'
+                      ? '변환 신청은 필수 절차입니다. 신청하지 않으면 출금이 불가능합니다.'
+                      : 'Conversion is mandatory. You cannot withdraw without applying.'
+                    }
+                  </p>
+                </div>
                 <p className="form-description withdraw-description" style={{ whiteSpace: 'pre-line' }}>
                   {(() => {
                     const nextRound = getNextRoundStartTime(language);
@@ -2375,7 +2462,7 @@ export default function MainPage() {
                           };
                           
                           if (language === 'ko') {
-                            return `포인트가 ${monthNames.ko[date.getMonth()]} ${date.getDate()}일에 BGSC로 변환 후 출금 가능`;
+                            return `포인트가 ${monthNames.ko[date.getMonth()]} ${date.getDate()}일에 BGSC로 최종 라운드 변환 후 출금 가능`;
                           } else {
                             return `Points will be converted to BGSC on ${monthNames.en[date.getMonth()]} ${date.getDate()} for withdrawal.`;
                           }

@@ -5,6 +5,7 @@ import { formatAmount } from "utils";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { t } from "../../translations";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import LanguageToggle from "../../components/LanguageToggle";
 // SVG Icon Imports
 import iconStackRound from "assets/icon-stack-round.svg";
 import iconMindfulness from "assets/icon-mindfulness.svg";
@@ -188,7 +189,8 @@ export default function LandingPage() {
             </div>
 
             <div className="landing-nav-right">
-              <ConnectButton 
+              <LanguageToggle />
+              <ConnectButton
                 showBalance={false}
                 accountStatus="address"
                 chainStatus="none"
