@@ -964,7 +964,7 @@ export default function MainPage() {
 
       {/* Header */}
       <header className="header-wrapper">
-        <div className="header-container">
+        <div className="header-container" style={isMobile ? { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } : {}}>
           <div className="logo-section">
             <img
               onClick={scrollToTop}
@@ -976,14 +976,20 @@ export default function MainPage() {
             <div className="logo-right">
               <img src={`${process.env.PUBLIC_URL}/logo-text.png`} className="logo-text" alt="Logo" />
               <div className="logo-info">
-                <span style={{ color: '#FFC107', fontWeight: 'bold' }}>
+                <span style={{ color: '#FFC107', fontWeight: 'bold', marginRight: isMobile ? '10px' : '21px' }}>
                   {language === 'ko' ? '마감 롤링' : 'Final Rolling'}
                 </span>
-                <span>{t('main.stats.next', language)}: {nextRoundInfo.formattedDate}</span>
-                <span className="live-trading-highlight">{t('main.stats.liveTrading', language)}</span>
+                <span style={{ marginRight: isMobile ? '10px' : '21px' }}>{t('main.stats.next', language)}: 11월 1일 00시</span>
+                <span className="live-trading-highlight" style={{ marginRight: isMobile ? '0' : '21px' }}>{t('main.stats.liveTrading', language)}</span>
               </div>
             </div>
           </div>
+
+          {isMobile && (
+            <div style={{ flexShrink: 0 }}>
+              <HeaderLanguageToggle />
+            </div>
+          )}
 
           {!isMobile && (
             <div className="wallet-section desktop-only">
@@ -1115,8 +1121,7 @@ export default function MainPage() {
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <HeaderLanguageToggle />
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
                       {isConnected && address ? (
                         <button
                           onClick={openAccountModal}
@@ -1326,136 +1331,81 @@ export default function MainPage() {
                         </div>
                       </div>
 
-                      {/* Round Timer Card */}
-                      <div className="hero-card timer-card">
-                        <div className="card-inner">
-                          <div className="timer-header">
-                            
-                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path className="timer-icon" fillRule="evenodd" clipRule="evenodd" d="M12 10.761C12 10.794 11.984 10.823 11.981 10.855C11.9754 10.9227 11.9616 10.9895 11.94 11.054C11.9038 11.1736 11.8447 11.285 11.766 11.382C11.722 11.435 11.676 11.482 11.622 11.526C11.597 11.546 11.582 11.575 11.555 11.593L6.829 14.743C6.60832 14.8846 6.34086 14.9338 6.08423 14.8801C5.8276 14.8264 5.60233 14.6741 5.45692 14.4559C5.31152 14.2377 5.25761 13.9712 5.30682 13.7136C5.35602 13.4561 5.5044 13.2282 5.72 13.079L10 10.226V5.556C10 5.29078 10.1054 5.03643 10.2929 4.84889C10.4804 4.66136 10.7348 4.556 11 4.556C11.2652 4.556 11.5196 4.66136 11.7071 4.84889C11.8946 5.03643 12 5.29078 12 5.556V10.761ZM11 0.5C5.201 0.5 0.5 5.201 0.5 11C0.5 16.799 5.201 21.5 11 21.5C16.799 21.5 21.5 16.799 21.5 11C21.5 5.201 16.799 0.5 11 0.5Z" fill="url(#paint0_linear_6265_710)"/>
-                              <defs>
-                              <linearGradient id="paint0_linear_6265_710" x1="0.5" y1="0.5" x2="25.5636" y2="6.10516" gradientUnits="userSpaceOnUse">
-                              <stop stopColor="#BF52FF"/>
-                              <stop offset="1" stopColor="#6C52FF"/>
-                              </linearGradient>
-                              </defs>
-                            </svg>
+                      {/* Round Timer Card - 2025년 11월 이전만 표시 */}
+                      {countdown.shouldShowCountdown && (
+                        <div className="hero-card timer-card">
+                          <div className="card-inner">
+                            <div className="timer-header">
 
-                            <span className="round-label">
-                              {language === 'ko' ? '최종 마감 롤링' : 'Final Rolling'}
-                            </span>
-                            <span className="round-badge">FINAL</span>
-                          </div>
-                          <div className="timer-countdown">
-                            <div className="time-unit">
-                              <div className="time-value">{countdown.hours.toString().padStart(2, '0')}</div>
-                              <div className="time-label">{language === 'ko' ? '시간' : 'HRS'}</div>
+                              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path className="timer-icon" fillRule="evenodd" clipRule="evenodd" d="M12 10.761C12 10.794 11.984 10.823 11.981 10.855C11.9754 10.9227 11.9616 10.9895 11.94 11.054C11.9038 11.1736 11.8447 11.285 11.766 11.382C11.722 11.435 11.676 11.482 11.622 11.526C11.597 11.546 11.582 11.575 11.555 11.593L6.829 14.743C6.60832 14.8846 6.34086 14.9338 6.08423 14.8801C5.8276 14.8264 5.60233 14.6741 5.45692 14.4559C5.31152 14.2377 5.25761 13.9712 5.30682 13.7136C5.35602 13.4561 5.5044 13.2282 5.72 13.079L10 10.226V5.556C10 5.29078 10.1054 5.03643 10.2929 4.84889C10.4804 4.66136 10.7348 4.556 11 4.556C11.2652 4.556 11.5196 4.66136 11.7071 4.84889C11.8946 5.03643 12 5.29078 12 5.556V10.761ZM11 0.5C5.201 0.5 0.5 5.201 0.5 11C0.5 16.799 5.201 21.5 11 21.5C16.799 21.5 21.5 16.799 21.5 11C21.5 5.201 16.799 0.5 11 0.5Z" fill="url(#paint0_linear_6265_710)"/>
+                                <defs>
+                                <linearGradient id="paint0_linear_6265_710" x1="0.5" y1="0.5" x2="25.5636" y2="6.10516" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#BF52FF"/>
+                                <stop offset="1" stopColor="#6C52FF"/>
+                                </linearGradient>
+                                </defs>
+                              </svg>
+
+                              <span className="round-label">
+                                {language === 'ko' ? '최종 마감 롤링' : 'Final Rolling'}
+                              </span>
+                              <span className="round-badge">FINAL</span>
                             </div>
-                            <div className="time-separator">:</div>
-                            <div className="time-unit">
-                              <div className="time-value">{countdown.minutes.toString().padStart(2, '0')}</div>
-                              <div className="time-label">{language === 'ko' ? '분' : 'MIN'}</div>
+                            <div className="timer-countdown">
+                              <div className="time-unit">
+                                <div className="time-value">{countdown.hours.toString().padStart(2, '0')}</div>
+                                <div className="time-label">{language === 'ko' ? '시간' : 'HRS'}</div>
+                              </div>
+                              <div className="time-separator">:</div>
+                              <div className="time-unit">
+                                <div className="time-value">{countdown.minutes.toString().padStart(2, '0')}</div>
+                                <div className="time-label">{language === 'ko' ? '분' : 'MIN'}</div>
+                              </div>
+                              <div className="time-separator">:</div>
+                              <div className="time-unit">
+                                <div className="time-value">{countdown.seconds.toString().padStart(2, '0')}</div>
+                                <div className="time-label">{language === 'ko' ? '초' : 'SEC'}</div>
+                              </div>
                             </div>
-                            <div className="time-separator">:</div>
-                            <div className="time-unit">
-                              <div className="time-value">{countdown.seconds.toString().padStart(2, '0')}</div>
-                              <div className="time-label">{language === 'ko' ? '초' : 'SEC'}</div>
+                            <div className="timer-footer">
+                              {language === 'ko' ? '최종 출금 종료까지' : 'Until final ends'}
+                              <span style={{ fontSize: '12px', opacity: 0.88, marginLeft: '8px' }}>
+                                {language === 'ko' ? '(최종 변환 마감까지)' : '(Convert finish)'}
+                              </span>
                             </div>
-                          </div>
-                          <div className="timer-footer">
-                            {language === 'ko' ? '최종 출금 종료까지' : 'Until final ends'}
-                            <span style={{ fontSize: '12px', opacity: 0.88, marginLeft: '8px' }}>
-                              {language === 'ko' ? '(최종 변환 마감까지)' : '(Convert finish)'}
-                            </span>
                           </div>
                         </div>
-                      </div>                    
+                      )}
 
-                      {/* APY Card */}
+                      {/* Round Closing Notice Card */}
                       <div className="hero-card apy-card">
-                        <div className="card-inner">
-                          <div className="apy-header">
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path fillRule="evenodd" clipRule="evenodd" d="M3.737 17.7071H1C0.734784 17.7071 0.48043 17.6018 0.292893 17.4142C0.105357 17.2267 0 16.9723 0 16.7071V10.1811C0 9.91589 0.105357 9.66154 0.292893 9.474C0.48043 9.28646 0.734784 9.18111 1 9.18111H3.737C4.00222 9.18111 4.25657 9.28646 4.44411 9.474C4.63164 9.66154 4.737 9.91589 4.737 10.1811V16.7071C4.737 16.9723 4.63164 17.2267 4.44411 17.4142C4.25657 17.6018 4.00222 17.7071 3.737 17.7071ZM10.369 17.7071H7.632C7.36678 17.7071 7.11243 17.6018 6.92489 17.4142C6.73736 17.2267 6.632 16.9723 6.632 16.7071V1C6.632 0.734784 6.73736 0.480429 6.92489 0.292893C7.11243 0.105357 7.36678 0 7.632 0H10.369C10.6342 0 10.8886 0.105357 11.0761 0.292893C11.2636 0.480429 11.369 0.734784 11.369 1V16.7071C11.369 16.9723 11.2636 17.2267 11.0761 17.4142C10.8886 17.6018 10.6342 17.7071 10.369 17.7071ZM17 17.7071H14.263C13.9978 17.7071 13.7434 17.6018 13.5559 17.4142C13.3684 17.2267 13.263 16.9723 13.263 16.7071V5.5C13.263 5.23478 13.3684 4.98043 13.5559 4.79289C13.7434 4.60536 13.9978 4.5 14.263 4.5H17C17.2652 4.5 17.5196 4.60536 17.7071 4.79289C17.8946 4.98043 18 5.23478 18 5.5V16.7071C18 16.9723 17.8946 17.2267 17.7071 17.4142C17.5196 17.6018 17.2652 17.7071 17 17.7071Z" fill="#8B95A1"/>
-                              <path fillRule="evenodd" clipRule="evenodd" d="M3.737 17.7071H1C0.734784 17.7071 0.48043 17.6018 0.292893 17.4142C0.105357 17.2267 0 16.9723 0 16.7071V10.1811C0 9.91589 0.105357 9.66154 0.292893 9.474C0.48043 9.28646 0.734784 9.18111 1 9.18111H3.737C4.00222 9.18111 4.25657 9.28646 4.44411 9.474C4.63164 9.66154 4.737 9.91589 4.737 10.1811V16.7071C4.737 16.9723 4.63164 17.2267 4.44411 17.4142C4.25657 17.6018 4.00222 17.7071 3.737 17.7071ZM10.369 17.7071H7.632C7.36678 17.7071 7.11243 17.6018 6.92489 17.4142C6.73736 17.2267 6.632 16.9723 6.632 16.7071V1C6.632 0.734784 6.73736 0.480429 6.92489 0.292893C7.11243 0.105357 7.36678 0 7.632 0H10.369C10.6342 0 10.8886 0.105357 11.0761 0.292893C11.2636 0.480429 11.369 0.734784 11.369 1V16.7071C11.369 16.9723 11.2636 17.2267 11.0761 17.4142C10.8886 17.6018 10.6342 17.7071 10.369 17.7071ZM17 17.7071H14.263C13.9978 17.7071 13.7434 17.6018 13.5559 17.4142C13.3684 17.2267 13.263 16.9723 13.263 16.7071V5.5C13.263 5.23478 13.3684 4.98043 13.5559 4.79289C13.7434 4.60536 13.9978 4.5 14.263 4.5H17C17.2652 4.5 17.5196 4.60536 17.7071 4.79289C17.8946 4.98043 18 5.23478 18 5.5V16.7071C18 16.9723 17.8946 17.2267 17.7071 17.4142C17.5196 17.6018 17.2652 17.7071 17 17.7071Z" fill="url(#paint0_linear_6265_736)"/>
-                              <defs>
-                              <linearGradient id="paint0_linear_6265_736" x1="0" y1="0" x2="21.449" y2="4.87614" gradientUnits="userSpaceOnUse">
-                              <stop stopColor="#16A9F2"/>
-                              <stop offset="1" stopColor="#6DACFF"/>
-                              </linearGradient>
-                              </defs>
+                        <div className="card-inner" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                          <div className="apy-header" style={{ justifyContent: 'center' }}>
+                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path fillRule="evenodd" clipRule="evenodd" d="M11 8.2C10.6817 8.2 10.3765 8.07357 10.1515 7.84853C9.92643 7.62348 9.8 7.31826 9.8 7C9.8 6.68174 9.92643 6.37652 10.1515 6.15147C10.3765 5.92643 10.6817 5.8 11 5.8C11.3183 5.8 11.6235 5.92643 11.8485 6.15147C12.0736 6.37652 12.2 6.68174 12.2 7C12.2 7.31826 12.0736 7.62348 11.8485 7.84853C11.6235 8.07357 11.3183 8.2 11 8.2ZM12 15.635C12 15.9002 11.8946 16.1546 11.7071 16.3421C11.5196 16.5296 11.2652 16.635 11 16.635C10.7348 16.635 10.4804 16.5296 10.2929 16.3421C10.1054 16.1546 10 15.9002 10 15.635V10.635C10 10.3698 10.1054 10.1154 10.2929 9.92789C10.4804 9.74036 10.7348 9.635 11 9.635C11.2652 9.635 11.5196 9.74036 11.7071 9.92789C11.8946 10.1154 12 10.3698 12 10.635V15.635ZM11 0C4.925 0 0 4.925 0 11C0 17.075 4.925 22 11 22C17.075 22 22 17.075 22 11C22 4.925 17.075 0 11 0Z" fill="#FFC107"/>
                             </svg>
 
-                            <span className="apy-label">{language === 'ko' ? '최종 라운드 까지의 예상 수익률' : 'Expected Remaining Until Last Round'}</span>
-                          </div>
-                          <div className="apy-display">
-                            <span className="apy-number">
-                              {(() => {
-                                const totalTVL = safeBigInt(vaultMetrics.totalValueLocked || '10000000000000000000000000');
-                                const currentRound = (vaultInfo.currentRound || 2) - 2; // 프론트 표기는 -2
-                                
-                                // 라운드별 보상풀 설정 (표시 라운드 기준)
-                                let roundRewardPool;
-                                if (currentRound === 0) {
-                                  // 표시 라운드 0 (실제 라운드 2): 1.5억개
-                                  roundRewardPool = safeBigInt('150000000000000000000000000');
-                                } else if (currentRound >= 1 && currentRound <= 5) {
-                                  // 표시 라운드 1-5 (실제 라운드 3-7): 각 1억개
-                                  roundRewardPool = safeBigInt('100000000000000000000000000');
-                                } else {
-                                  // 표시 라운드 6 이후: 0
-                                  roundRewardPool = safeBigInt('0');
-                                }
-                                
-                                // 월 수익률 계산 - TVL에서 누적 보너스 제외 (라운드 8까지만)
-                                // 실제 라운드별 누적 보너스 계산
-                                let accumulatedBonus = 0n;
-                                const actualRound = vaultInfo.currentRound || 4;
-                                
-                                if (actualRound >= 2 && actualRound <= 8) {
-                                  // 라운드 2의 1.5억개
-                                  accumulatedBonus += parseUnits('150000000', vaultInfo.decimals);
-                                  
-                                  if (actualRound >= 5) {
-                                    // 라운드 5부터는 각 라운드당 1억개씩 추가 (최대 라운드 8까지)
-                                    const additionalRounds = BigInt(Math.min(actualRound, 8) - 4);
-                                    accumulatedBonus += parseUnits('100000000', vaultInfo.decimals) * additionalRounds;
-                                  }
-                                }
-                                
-                                const adjustedTVL = totalTVL > accumulatedBonus ? totalTVL - accumulatedBonus : totalTVL;
-                                const monthlyReturn = adjustedTVL > 0n ? (roundRewardPool * 10000n) / adjustedTVL : 0n;
-                                const monthlyRate = Number(monthlyReturn) / 100;
-                                
-                                // 디버깅용 로그 (제거 - 너무 자주 실행됨)
-                                // console.log('APY Calculation:', {
-                                //   actualRound: actualRound,
-                                //   displayRound: currentRound,
-                                //   totalTVL: formatAmount(totalTVL, vaultInfo.decimals),
-                                //   accumulatedBonus: formatAmount(accumulatedBonus, vaultInfo.decimals),
-                                //   adjustedTVL: formatAmount(adjustedTVL, vaultInfo.decimals),
-                                //   roundRewardPool: formatAmount(roundRewardPool, vaultInfo.decimals),
-                                //   monthlyRate: monthlyRate.toFixed(2) + '%'
-                                // });
-                                
-                                const monthlyText = language === 'ko' ? '+ ' : '+ ';
-                                return (
-                                  <>
-                                    <span style={{ fontSize: '0.6em', fontWeight: 'normal' }}>{monthlyText}</span>
-                                    {monthlyRate.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                  </>
-                                );
-                              })()}
+                            <span className="apy-label" style={{ color: '#FFC107', fontWeight: 'bold' }}>
+                              {language === 'ko' ? '마감 라운드 중요 안내' : 'Important Notice'}
                             </span>
-                            <span className="apy-symbol">%</span>
-                            {vaultInfo.currentRound === 2 && (
-                              <div className="apy-bonus-badge" style={{ marginTop: '10px' }}>
-                                {language === 'ko' ? '1라운드 5천만개 수익률 추가!' : 'Round 1 +50M APY Bonus!'}
-                              </div>
-                            )}
                           </div>
-                          <div className="apy-subtitle">
-                            {language === 'ko' ? '현재 수량 기준, 최종 라운드까지 수익률(변동)' : 'Current Deposit Quantities (Varying)'}
+                          <div style={{ padding: '16px 0', textAlign: 'center', lineHeight: '1.7' }}>
+                            <p style={{ margin: '0 0 14px 0', fontSize: '17px', color: '#FFFFFF', fontWeight: 'bold' }}>
+                              {language === 'ko'
+                                ? '현재 최종 라운드가 진행 중입니다.'
+                                : 'Final round is in progress'}
+                            </p>
+                            <p style={{ margin: '0 0 14px 0', fontSize: '15px', color: '#10b981', fontWeight: '600' }}>
+                              {language === 'ko'
+                                ? '지금 반드시 포인트 수령 후 즉시 변환을 신청하세요'
+                                : 'Apply for conversion immediately after redeeming points'}
+                            </p>
+                            <p style={{ margin: '0', fontSize: '25px', color: '#ef4444', fontWeight: 'bold' }}>
+                              {language === 'ko'
+                                ? '지금 즉시, 포인트 수령 및 변환 신청을 완료하세요!'
+                                : 'Complete redeem all right now!'}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1486,7 +1436,7 @@ export default function MainPage() {
                     </div>
                     <span className="notice-text" style={{ color: '#FFC107', fontWeight: 'bold' }}>
                       {language === 'ko'
-                        ? '최종 라운드 진행 중! 마감 롤링전 포인트 수령 및 변환을 반드시 신청하세요!'
+                        ? '최종 마감 라운드! 마감 롤링전 포인트 수령 및 변환을 반드시 신청하세요!'
                         : 'Final round in progress! You MUST apply for point redemption and conversion!'}
                     </span>
                   </div>
@@ -1966,11 +1916,11 @@ export default function MainPage() {
                   marginBottom: '16px'
                 }}>
                   <p style={{ color: '#FFC107', fontWeight: 'bold', fontSize: '16px', margin: 0 }}>
-                    {language === 'ko' ? '⚠️ 반드시 신청하세요!' : '⚠️ MUST Apply!'}
+                    {language === 'ko' ? '⚠️ 반드시 즉시 포인트 수령하세요!' : '⚠️ MUST Apply Redeem!'}
                   </p>
                   <p style={{ color: '#FFC107', fontSize: '14px', marginTop: '8px', marginBottom: 0 }}>
                     {language === 'ko'
-                      ? '포인트 수령은 필수 절차입니다. 즉시 신청하지 않으면 출금이 불가능합니다.'
+                      ? '즉시 포인트 수령 후, 즉시 포인트 변환 신청 하세요! 신청하지 않으면 출금이 불가능합니다.'
                       : 'Point redemption is mandatory. You cannot withdraw without applying.'
                     }
                   </p>
